@@ -1,0 +1,6 @@
+@FranchiseApi_HostAddress = http://localhost:5264
+
+GET {{FranchiseApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
