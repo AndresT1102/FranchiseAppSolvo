@@ -4,6 +4,7 @@ import { productApi, branchApi, franchiseApi } from '../services/api';
 import Modal from '../components/common/Modal';
 import SearchBar from '../components/common/SearchBar';
 import Button from '../components/common/button';
+import { showSuccess, showError, showWarning, showConfirm } from '../utils/sweetAlert';
 import './Franchises.css';
 
 const Products = () => {
@@ -39,7 +40,7 @@ const Products = () => {
       setProducts(productsResponse.data);
     } catch (error) {
       console.error('Error loading products:', error);
-      alert('Error loading products. Please try again.');
+      showError('Error loading products. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -64,16 +65,20 @@ const Products = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this product?')) {
-      return;
-    }
+    const result = await showConfirm(
+      'Are you sure?',
+      'Do you want to delete this product?'
+    );
 
-    try {
-      await productApi.delete(id);
-      await loadData();
-    } catch (error) {
-      console.error('Error deleting product:', error);
-      alert('Error deleting product. Please try again.');
+    if (result.isConfirmed) {
+      try {
+        await productApi.delete(id);
+        await loadData();
+        showSuccess('Product deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting product:', error);
+        showError('Error deleting product. Please try again.');
+      }
     }
   };
 
@@ -81,12 +86,12 @@ const Products = () => {
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      alert('Please enter a product name');
+      showWarning('Please enter a product name');
       return;
     }
 
     if (formData.stock < 0) {
-      alert('Stock cannot be negative');
+      showWarning('Stock cannot be negative');
       return;
     }
 
@@ -96,11 +101,13 @@ const Products = () => {
           name: formData.name, 
           stock: parseInt(formData.stock) 
         });
+        showSuccess('Product updated successfully!');
       } else {
         await productApi.create({
           ...formData,
           stock: parseInt(formData.stock)
         });
+        showSuccess('Product created successfully!');
       }
       
       setShowModal(false);
@@ -108,7 +115,7 @@ const Products = () => {
       await loadData();
     } catch (error) {
       console.error('Error saving product:', error);
-      alert('Error saving product. Please try again.');
+      showError('Error saving product. Please try again.');
     }
   };
 
@@ -116,18 +123,19 @@ const Products = () => {
     e.preventDefault();
     
     if (stockValue < 0) {
-      alert('Stock cannot be negative');
+      showWarning('Stock cannot be negative');
       return;
     }
 
     try {
       await productApi.updateStock(updatingStock.id, parseInt(stockValue));
+      showSuccess('Stock updated successfully!');
       setShowStockModal(false);
       setUpdatingStock(null);
       await loadData();
     } catch (error) {
       console.error('Error updating stock:', error);
-      alert('Error updating stock. Please try again.');
+      showError('Error updating stock. Please try again.');
     }
   };
 

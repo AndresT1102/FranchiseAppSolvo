@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import './Sidebar.css';
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const menuItems = [
     {
       path: '/',
@@ -28,9 +28,17 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'open' : ''}`}>
       <div className="sidebar-header">
         <h1 className="sidebar-title">Franchise Manager</h1>
+        
+        {/* Botón cerrar solo en móviles */}
+        <button className="sidebar-close" onClick={onClose}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
       </div>
       
       <nav className="sidebar-nav">
@@ -42,6 +50,7 @@ const Sidebar = () => {
                 className={({ isActive }) => 
                   `sidebar-link ${isActive ? 'active' : ''}`
                 }
+                onClick={onClose}
               >
                 <span className="sidebar-icon">{item.icon}</span>
                 <span className="sidebar-label">{item.label}</span>

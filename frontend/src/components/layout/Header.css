@@ -4,9 +4,10 @@
   left: var(--sidebar-width);
   right: 0;
   height: var(--header-height);
-  background-color: white;
+  background-color: var(--white);
   border-bottom: 1px solid var(--gray-200);
   z-index: 90;
+  transition: left 0.3s ease;
 }
 
 .header-content {
@@ -15,10 +16,28 @@
   justify-content: space-between;
   height: 100%;
   padding: 0 var(--spacing-xl);
+  max-width: 100%;
+  gap: var(--spacing-md);
+}
+
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--gray-600);
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: color 0.2s;
+  flex-shrink: 0;
+}
+
+.hamburger-btn:hover {
+  color: var(--primary-green);
 }
 
 .header-text {
   flex: 1;
+  min-width: 0;
 }
 
 .header-title {
@@ -26,34 +45,93 @@
   font-weight: 600;
   color: var(--gray-900);
   margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-subtitle {
   font-size: 0.875rem;
   color: var(--gray-500);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-actions {
   display: flex;
   align-items: center;
   gap: var(--spacing-md);
+  flex-shrink: 0;
 }
 
 .user-button {
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background-color: var(--primary-blue);
-  color: white;
+  background-color: var(--primary-green);
+  color: var(--white);
   border: none;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .user-button:hover {
-  background-color: var(--primary-blue-dark);
+  background-color: var(--primary-green-dark);
   transform: scale(1.05);
+}
+
+/* Tablets y menores */
+@media (max-width: 1024px) {
+  .header {
+    left: 0;
+  }
+  
+  .header-content {
+    padding: 0 var(--spacing-lg);
+  }
+  
+  .hamburger-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+/* Móviles */
+@media (max-width: 768px) {
+  .header {
+    height: var(--header-height-mobile);
+  }
+  
+  .header-content {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .header-title {
+    font-size: 1.125rem;
+  }
+  
+  .header-subtitle {
+    font-size: 0.75rem;
+  }
+  
+  .user-button {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-subtitle {
+    display: none;
+  }
+  
+  .header-title {
+    font-size: 1rem;
+  }
 }

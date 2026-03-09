@@ -4,6 +4,7 @@ import { franchiseApi, branchApi } from '../services/api';
 import Modal from '../components/common/Modal';
 import SearchBar from '../components/common/SearchBar';
 import Button from '../components/common/button';
+import { showSuccess, showError, showConfirm, showWarning } from '../utils/sweetAlert';
 import './Franchises.css';
 
 const Franchises = () => {
@@ -41,7 +42,7 @@ const Franchises = () => {
       setBranchCounts(counts);
     } catch (error) {
       console.error('Error loading franchises:', error);
-      alert('Error loading franchises. Please try again.');
+      showError('Error loading franchises. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -60,16 +61,20 @@ const Franchises = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this franchise?')) {
-      return;
-    }
+    const result = await showConfirm(
+      'Are you sure?',
+      'Do you want to delete this franchise?'
+    );
 
-    try {
-      await franchiseApi.delete(id);
-      await loadFranchises();
-    } catch (error) {
-      console.error('Error deleting franchise:', error);
-      alert('Error deleting franchise. It may have associated branches.');
+    if (result.isConfirmed) {
+      try {
+        await franchiseApi.delete(id);
+        await loadFranchises();
+        showSuccess('Franchise deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting franchise:', error);
+        showError('Error deleting franchise. It may have associated branches.');
+      }
     }
   };
 
@@ -77,15 +82,17 @@ const Franchises = () => {
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      alert('Please enter a franchise name');
+      showWarning('Please enter a franchise name');
       return;
     }
 
     try {
       if (editingFranchise) {
         await franchiseApi.update(editingFranchise.id, formData);
+        showSuccess('Franchise updated successfully!');
       } else {
         await franchiseApi.create(formData);
+        showSuccess('Franchise created successfully!');
       }
       
       setShowModal(false);
@@ -93,7 +100,7 @@ const Franchises = () => {
       await loadFranchises();
     } catch (error) {
       console.error('Error saving franchise:', error);
-      alert('Error saving franchise. Please try again.');
+      showError('Error saving franchise. Please try again.');
     }
   };
 

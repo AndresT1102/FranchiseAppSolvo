@@ -2,13 +2,17 @@
 .branches-page,
 .products-page {
   max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: var(--spacing-xl);
+  gap: var(--spacing-md);
+  flex-wrap: wrap;
 }
 
 .page-title {
@@ -17,8 +21,14 @@
   color: var(--gray-900);
 }
 
+.page-subtitle {
+  font-size: 0.875rem;
+  color: var(--gray-500);
+  margin-top: 0.25rem;
+}
+
 .page-content {
-  background-color: white;
+  background-color: var(--white);
   border-radius: var(--radius-xl);
   padding: var(--spacing-xl);
   box-shadow: var(--shadow-sm);
@@ -35,6 +45,7 @@
   border: 1px solid var(--gray-200);
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-xl);
+  width: 100%;
 }
 
 .search-bar svg {
@@ -49,6 +60,7 @@
   font-size: 0.9375rem;
   color: var(--gray-900);
   outline: none;
+  min-width: 0;
 }
 
 .search-bar input::placeholder {
@@ -58,11 +70,13 @@
 /* Table */
 .table-container {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
+  min-width: 600px;
 }
 
 .data-table thead {
@@ -76,6 +90,7 @@
   font-weight: 600;
   color: var(--gray-700);
   border-bottom: 2px solid var(--gray-200);
+  white-space: nowrap;
 }
 
 .data-table td {
@@ -103,13 +118,14 @@
   display: flex;
   gap: var(--spacing-sm);
   align-items: center;
+  flex-wrap: wrap;
 }
 
 .action-btn {
   padding: 0.5rem 0.75rem;
   border-radius: var(--radius-sm);
   border: 1px solid var(--gray-300);
-  background-color: white;
+  background-color: var(--white);
   cursor: pointer;
   transition: all 0.2s;
   display: inline-flex;
@@ -117,6 +133,7 @@
   gap: 0.375rem;
   font-size: 0.8125rem;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .action-btn-view {
@@ -129,12 +146,12 @@
 }
 
 .action-btn-edit {
-  color: var(--primary-blue);
-  border-color: var(--primary-blue);
+  color: var(--primary-green);
+  border-color: var(--primary-green);
 }
 
 .action-btn-edit:hover {
-  background-color: #dbeafe;
+  background-color: #d1fae5;
 }
 
 .action-btn-delete {
@@ -144,6 +161,27 @@
 
 .action-btn-delete:hover {
   background-color: #fee2e2;
+}
+
+.action-btn-stock {
+  color: var(--primary-green);
+  background-color: #d1fae5;
+  border-color: var(--primary-green);
+}
+
+.action-btn-stock:hover {
+  background-color: #a7f3d0;
+}
+
+/* Stock Badge */
+.stock-badge {
+  display: inline-block;
+  padding: 0.375rem 0.75rem;
+  background-color: #d1fae5;
+  color: #065f46;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 /* Modal */
@@ -162,12 +200,14 @@
 }
 
 .modal {
-  background-color: white;
+  background-color: var(--white);
   border-radius: var(--radius-xl);
   width: 100%;
   max-width: 500px;
   box-shadow: var(--shadow-lg);
   animation: modalSlideIn 0.2s ease-out;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 @keyframes modalSlideIn {
@@ -187,6 +227,10 @@
   align-items: center;
   padding: var(--spacing-xl);
   border-bottom: 1px solid var(--gray-200);
+  position: sticky;
+  top: 0;
+  background-color: var(--white);
+  z-index: 1;
 }
 
 .modal-title {
@@ -205,6 +249,7 @@
   align-items: center;
   justify-content: center;
   transition: color 0.2s;
+  flex-shrink: 0;
 }
 
 .modal-close:hover {
@@ -221,11 +266,19 @@
   gap: var(--spacing-md);
   padding: var(--spacing-xl);
   border-top: 1px solid var(--gray-200);
+  position: sticky;
+  bottom: 0;
+  background-color: var(--white);
+  flex-wrap: wrap;
 }
 
 /* Form */
 .form-group {
   margin-bottom: var(--spacing-lg);
+}
+
+.form-group:last-child {
+  margin-bottom: 0;
 }
 
 .form-group label {
@@ -252,8 +305,8 @@
 
 .form-input:focus {
   outline: none;
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  border-color: var(--primary-green);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
 }
 
 .form-input::placeholder {
@@ -266,29 +319,13 @@
   color: var(--gray-500);
 }
 
-/* Stock Badge */
-.stock-badge {
-  display: inline-block;
-  padding: 0.375rem 0.75rem;
-  background-color: #d1fae5;
-  color: #065f46;
-  border-radius: var(--radius-md);
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.action-btn-stock {
-  color: var(--primary-blue);
-  background-color: #dbeafe;
-  border-color: var(--primary-blue);
-}
-
-.action-btn-stock:hover {
-  background-color: #bfdbfe;
-}
-
-.modal-sm {
-  max-width: 400px;
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.125rem;
+  color: var(--gray-500);
 }
 
 .stock-product-name {
@@ -298,8 +335,90 @@
   font-size: 1rem;
 }
 
-.page-subtitle {
-  font-size: 0.875rem;
-  color: var(--gray-500);
-  margin-top: 0.25rem;
+/* Responsive - Tablets */
+@media (max-width: 1024px) {
+  .page-title {
+    font-size: 1.75rem;
+  }
+  
+  .page-content {
+    padding: var(--spacing-lg);
+  }
+  
+  .data-table th,
+  .data-table td {
+    padding: var(--spacing-md);
+  }
+}
+
+/* Responsive - Móviles */
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .page-content {
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+  }
+  
+  .search-bar {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .data-table {
+    min-width: 500px;
+    font-size: 0.875rem;
+  }
+  
+  .data-table th,
+  .data-table td {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .modal {
+    max-width: 100%;
+    margin: var(--spacing-md);
+    max-height: calc(100vh - 2rem);
+  }
+  
+  .modal-header,
+  .modal-body,
+  .modal-footer {
+    padding: var(--spacing-md);
+  }
+  
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.25rem;
+  }
+  
+  .data-table {
+    min-width: 400px;
+    font-size: 0.8125rem;
+  }
 }

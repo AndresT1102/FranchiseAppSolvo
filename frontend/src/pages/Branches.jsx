@@ -4,6 +4,7 @@ import { branchApi, franchiseApi, productApi } from '../services/api';
 import Modal from '../components/common/Modal';
 import SearchBar from '../components/common/SearchBar';
 import Button from '../components/common/button';
+import { showSuccess, showError, showWarning, showConfirm } from '../utils/sweetAlert';
 import './Franchises.css';
 
 const Branches = () => {
@@ -47,7 +48,7 @@ const Branches = () => {
       setProductCounts(counts);
     } catch (error) {
       console.error('Error loading branches:', error);
-      alert('Error loading branches. Please try again.');
+      showError('Error loading branches. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -66,16 +67,20 @@ const Branches = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm('Are you sure you want to delete this branch?')) {
-      return;
-    }
+    const result = await showConfirm(
+      'Are you sure?',
+      'Do you want to delete this branch?'
+    );
 
-    try {
-      await branchApi.delete(id);
-      await loadData();
-    } catch (error) {
-      console.error('Error deleting branch:', error);
-      alert('Error deleting branch. It may have associated products.');
+    if (result.isConfirmed) {
+      try {
+        await branchApi.delete(id);
+        await loadData();
+        showSuccess('Branch deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting branch:', error);
+        showError('Error deleting branch. It may have associated products.');
+      }
     }
   };
 
@@ -83,15 +88,17 @@ const Branches = () => {
     e.preventDefault();
     
     if (!formData.name.trim()) {
-      alert('Please enter a branch name');
+      showWarning('Please enter a branch name');
       return;
     }
 
     try {
       if (editingBranch) {
         await branchApi.update(editingBranch.id, { name: formData.name });
+        showSuccess('Branch updated successfully!');
       } else {
         await branchApi.create(formData);
+        showSuccess('Branch created successfully!');
       }
       
       setShowModal(false);
@@ -99,7 +106,7 @@ const Branches = () => {
       await loadData();
     } catch (error) {
       console.error('Error saving branch:', error);
-      alert('Error saving branch. Please try again.');
+      showError('Error saving branch. Please try again.');
     }
   };
 

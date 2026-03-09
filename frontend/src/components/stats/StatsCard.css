@@ -1,5 +1,5 @@
 .stats-card {
-  background-color: white;
+  background-color: var(--white);
   border-radius: var(--radius-xl);
   padding: var(--spacing-xl);
   box-shadow: var(--shadow-sm);
@@ -29,23 +29,25 @@
   flex-shrink: 0;
 }
 
+/* Colores de iconos actualizados */
 .stats-icon--blue {
-  background-color: var(--primary-blue);
-  color: white;
+  background-color: var(--primary-green);
+  color: var(--white);
 }
 
 .stats-icon--green {
-  background-color: var(--green);
-  color: white;
+  background-color: var(--secondary-green);
+  color: var(--white);
 }
 
 .stats-icon--purple {
   background-color: var(--purple);
-  color: white;
+  color: var(--white);
 }
 
 .stats-info {
   flex: 1;
+  min-width: 0;
 }
 
 .stats-title {
@@ -62,4 +64,45 @@
 
 .stats-arrow {
   color: var(--gray-400);
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .stats-card {
+    padding: var(--spacing-lg);
+  }
+  
+  .stats-icon {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .stats-value {
+    font-size: 1.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-card-content {
+    gap: var(--spacing-md);
+  }
+  
+  .stats-icon {
+    width: 48px;
+    height: 48px;
+  }
+  
+  .stats-icon svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .stats-value {
+    font-size: 1.5rem;
+  }
+  
+  .stats-title {
+    font-size: 0.8125rem;
+  }
 }

@@ -1,10 +1,17 @@
 :root {
-  /* Colores principales */
-  --primary-blue: #2563eb;
-  --primary-blue-dark: #1d4ed8;
-  --green: #22c55e;
+  /* Colores principales - VERDE */
+  --primary-green: #10b981;
+  --primary-green-dark: #059669;
+  --primary-green-light: #34d399;
+  
+  --secondary-green: #22c55e;
+  --accent-green: #4ade80;
+  
+  /* Colores de apoyo */
   --purple: #a855f7;
   --red: #ef4444;
+  --yellow: #fbbf24;
+  --blue: #3b82f6;
   
   /* Grises */
   --gray-50: #f9fafb;
@@ -17,6 +24,10 @@
   --gray-700: #374151;
   --gray-800: #1f2937;
   --gray-900: #111827;
+  
+  /* Blanco y negro */
+  --white: #ffffff;
+  --black: #000000;
   
   /* Espaciado */
   --spacing-xs: 0.25rem;
@@ -36,8 +47,17 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
   
-  /* Sidebar */
-  --sidebar-width: 250px;
+  /* Layout */
+  --sidebar-width: 280px;
+  --sidebar-width-mobile: 0;
   --header-height: 80px;
+  --header-height-mobile: 64px;
+  
+  /* Breakpoints (para referencia en JS) */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
 }

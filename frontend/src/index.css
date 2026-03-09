@@ -41,12 +41,12 @@ body {
 }
 
 .btn-primary {
-  background-color: var(--primary-blue);
-  color: white;
+  background-color: var(--primary-green);
+  color: var(--white);
 }
 
 .btn-primary:hover {
-  background-color: var(--primary-blue-dark);
+  background-color: var(--primary-green-dark);
 }
 
 .btn-secondary {
@@ -60,9 +60,21 @@ body {
 
 .btn-danger {
   background-color: var(--red);
-  color: white;
+  color: var(--white);
 }
 
 .btn-danger:hover {
   background-color: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.8125rem;
+  }
 }
