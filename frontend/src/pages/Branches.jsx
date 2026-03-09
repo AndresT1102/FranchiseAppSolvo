@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { branchApi, franchiseApi, productApi } from '../services/api';
+import Modal from '../components/common/Modal';
+import SearchBar from '../components/common/SearchBar';
+import Button from '../components/common/button';
+import './Franchises.css';
 
 const Branches = () => {
   const { franchiseId } = useParams();
@@ -22,16 +26,13 @@ const Branches = () => {
     try {
       setLoading(true);
       
-      // Load franchise details
       const franchiseResponse = await franchiseApi.getById(franchiseId);
       setFranchise(franchiseResponse.data);
       
-      // Load branches
       const branchesResponse = await branchApi.getAll(franchiseId);
       const branchesData = branchesResponse.data;
       setBranches(branchesData);
       
-      // Load product counts for each branch
       const counts = {};
       await Promise.all(
         branchesData.map(async (branch) => {
@@ -117,31 +118,27 @@ const Branches = () => {
           <h2 className="page-title">{franchise?.name} - Branches</h2>
           <p className="page-subtitle">Manage branches for this franchise</p>
         </div>
-        <button className="btn btn-primary" onClick={handleCreate}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
+        <Button 
+          variant="primary" 
+          onClick={handleCreate}
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          }
+        >
           Create Branch
-        </button>
+        </Button>
       </div>
 
       <div className="page-content">
-        {/* Search Bar */}
-        <div className="search-bar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+        <SearchBar 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search branches..."
+        />
 
-        {/* Table */}
         <div className="table-container">
           <table className="data-table">
             <thead>
@@ -207,50 +204,36 @@ const Branches = () => {
         </div>
       </div>
 
-      {/* Modal */}
-      {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className="modal-title">
-                {editingBranch ? 'Edit Branch' : 'Create New Branch'}
-              </h3>
-              <button className="modal-close" onClick={() => setShowModal(false)}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-              <div className="modal-body">
-                <div className="form-group">
-                  <label htmlFor="name">Branch Name <span className="required">*</span></label>
-                  <input
-                    type="text"
-                    id="name"
-                    className="form-input"
-                    placeholder="Enter branch name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  {editingBranch ? 'Update' : 'Create'}
-                </button>
-              </div>
-            </form>
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={editingBranch ? 'Edit Branch' : 'Create New Branch'}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit" onClick={handleSubmit}>
+              {editingBranch ? 'Update' : 'Create'}
+            </Button>
+          </>
+        }
+      >
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Branch Name <span className="required">*</span></label>
+            <input
+              type="text"
+              id="name"
+              className="form-input"
+              placeholder="Enter branch name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+            />
           </div>
-        </div>
-      )}
+        </form>
+      </Modal>
     </div>
   );
 };

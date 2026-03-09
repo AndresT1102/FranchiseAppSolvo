@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { productApi, branchApi, franchiseApi } from '../services/api';
+import Modal from '../components/common/Modal';
+import SearchBar from '../components/common/SearchBar';
+import Button from '../components/common/button';
+import './Franchises.css';
 
 const Products = () => {
   const { branchId } = useParams();
-  const navigate = useNavigate();
   const [branch, setBranch] = useState(null);
   const [franchise, setFranchise] = useState(null);
   const [products, setProducts] = useState([]);
@@ -25,16 +28,13 @@ const Products = () => {
     try {
       setLoading(true);
       
-      // Load branch details
       const branchResponse = await branchApi.getById(branchId);
       const branchData = branchResponse.data;
       setBranch(branchData);
       
-      // Load franchise details
       const franchiseResponse = await franchiseApi.getById(branchData.franchiseId);
       setFranchise(franchiseResponse.data);
       
-      // Load products
       const productsResponse = await productApi.getAll(branchId);
       setProducts(productsResponse.data);
     } catch (error) {
@@ -146,31 +146,27 @@ const Products = () => {
           <h2 className="page-title">{branch?.name} - Products</h2>
           <p className="page-subtitle">{franchise?.name} / {branch?.name}</p>
         </div>
-        <button className="btn btn-primary" onClick={handleCreate}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="12" y1="5" x2="12" y2="19"></line>
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-          </svg>
+        <Button 
+          variant="primary" 
+          onClick={handleCreate}
+          icon={
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+          }
+        >
           Create Product
-        </button>
+        </Button>
       </div>
 
       <div className="page-content">
-        {/* Search Bar */}
-        <div className="search-bar">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-          <input
-            type="text"
-            placeholder="Search..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+        <SearchBar 
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Search products..."
+        />
 
-        {/* Table */}
         <div className="table-container">
           <table className="data-table">
             <thead>
@@ -236,108 +232,84 @@ const Products = () => {
       </div>
 
       {/* Create/Edit Modal */}
-      {showModal && (
-        <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className="modal-title">
-                {editingProduct ? 'Edit Product' : 'Create New Product'}
-              </h3>
-              <button className="modal-close" onClick={() => setShowModal(false)}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-              <div className="modal-body">
-                <div className="form-group">
-                  <label htmlFor="name">Product Name <span className="required">*</span></label>
-                  <input
-                    type="text"
-                    id="name"
-                    className="form-input"
-                    placeholder="Enter product name"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label htmlFor="stock">Stock <span className="required">*</span></label>
-                  <input
-                    type="number"
-                    id="stock"
-                    className="form-input"
-                    placeholder="Enter stock quantity"
-                    value={formData.stock}
-                    onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
-                    min="0"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  {editingProduct ? 'Update' : 'Create'}
-                </button>
-              </div>
-            </form>
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={editingProduct ? 'Edit Product' : 'Create New Product'}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowModal(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit" onClick={handleSubmit}>
+              {editingProduct ? 'Update' : 'Create'}
+            </Button>
+          </>
+        }
+      >
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label htmlFor="name">Product Name <span className="required">*</span></label>
+            <input
+              type="text"
+              id="name"
+              className="form-input"
+              placeholder="Enter product name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              required
+            />
           </div>
-        </div>
-      )}
+          
+          <div className="form-group">
+            <label htmlFor="stock">Stock <span className="required">*</span></label>
+            <input
+              type="number"
+              id="stock"
+              className="form-input"
+              placeholder="Enter stock quantity"
+              value={formData.stock}
+              onChange={(e) => setFormData({ ...formData, stock: e.target.value })}
+              min="0"
+              required
+            />
+          </div>
+        </form>
+      </Modal>
 
       {/* Update Stock Modal */}
-      {showStockModal && (
-        <div className="modal-overlay" onClick={() => setShowStockModal(false)}>
-          <div className="modal modal-sm" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
-              <h3 className="modal-title">Update Stock</h3>
-              <button className="modal-close" onClick={() => setShowStockModal(false)}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-
-            <form onSubmit={handleStockSubmit}>
-              <div className="modal-body">
-                <p className="stock-product-name">{updatingStock?.name}</p>
-                <div className="form-group">
-                  <label htmlFor="stockValue">New Stock Quantity <span className="required">*</span></label>
-                  <input
-                    type="number"
-                    id="stockValue"
-                    className="form-input"
-                    placeholder="Enter new stock quantity"
-                    value={stockValue}
-                    onChange={(e) => setStockValue(e.target.value)}
-                    min="0"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setShowStockModal(false)}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn btn-primary">
-                  Update Stock
-                </button>
-              </div>
-            </form>
+      <Modal
+        isOpen={showStockModal}
+        onClose={() => setShowStockModal(false)}
+        title="Update Stock"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowStockModal(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" type="submit" onClick={handleStockSubmit}>
+              Update Stock
+            </Button>
+          </>
+        }
+      >
+        <form onSubmit={handleStockSubmit}>
+          <p className="stock-product-name">{updatingStock?.name}</p>
+          <div className="form-group">
+            <label htmlFor="stockValue">New Stock Quantity <span className="required">*</span></label>
+            <input
+              type="number"
+              id="stockValue"
+              className="form-input"
+              placeholder="Enter new stock quantity"
+              value={stockValue}
+              onChange={(e) => setStockValue(e.target.value)}
+              min="0"
+              required
+            />
           </div>
-        </div>
-      )}
+        </form>
+      </Modal>
     </div>
   );
 };
