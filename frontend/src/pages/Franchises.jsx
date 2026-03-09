@@ -142,7 +142,6 @@ const Franchises = () => {
             <thead>
               <tr>
                 <th>Franchise Name</th>
-                <th>Created Date</th>
                 <th>Branches</th>
                 <th>Actions</th>
               </tr>
@@ -152,7 +151,6 @@ const Franchises = () => {
                 filteredFranchises.map((franchise) => (
                   <tr key={franchise.id}>
                     <td className="font-semibold">{franchise.name}</td>
-                    <td className="text-gray">-</td>
                     <td>{branchCounts[franchise.id] || 0}</td>
                     <td>
                       <div className="action-buttons">

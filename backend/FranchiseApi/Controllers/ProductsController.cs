@@ -38,7 +38,8 @@ public class ProductsController : ControllerBase
                     Id = p.Id,
                     BranchId = p.BranchId,
                     Name = p.Name,
-                    Stock = p.Stock
+                    Stock = p.Stock,
+                    MinStock = p.MinStock  // ⬅️ AGREGADO
                 })
                 .ToListAsync();
 
@@ -64,7 +65,8 @@ public class ProductsController : ControllerBase
                     Id = p.Id,
                     BranchId = p.BranchId,
                     Name = p.Name,
-                    Stock = p.Stock
+                    Stock = p.Stock,
+                    MinStock = p.MinStock  // ⬅️ AGREGADO
                 })
                 .FirstOrDefaultAsync();
 
@@ -98,6 +100,11 @@ public class ProductsController : ControllerBase
                 return BadRequest("Stock cannot be negative");
             }
 
+            if (dto.MinStock < 0)
+            {
+                return BadRequest("Minimum stock cannot be negative");
+            }
+
             var branchExists = await _context.Branches.AnyAsync(b => b.Id == dto.BranchId);
             if (!branchExists)
             {
@@ -108,7 +115,8 @@ public class ProductsController : ControllerBase
             {
                 BranchId = dto.BranchId,
                 Name = dto.Name,
-                Stock = dto.Stock
+                Stock = dto.Stock,
+                MinStock = dto.MinStock
             };
 
             _context.Products.Add(product);
@@ -119,7 +127,8 @@ public class ProductsController : ControllerBase
                 Id = product.Id,
                 BranchId = product.BranchId,
                 Name = product.Name,
-                Stock = product.Stock
+                Stock = product.Stock,
+                MinStock = product.MinStock
             };
 
             return CreatedAtAction(nameof(GetProduct), new { id = product.Id }, productDto);
@@ -147,6 +156,11 @@ public class ProductsController : ControllerBase
                 return BadRequest("Stock cannot be negative");
             }
 
+            if (dto.MinStock < 0)
+            {
+                return BadRequest("Minimum stock cannot be negative");
+            }
+
             var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
@@ -155,6 +169,7 @@ public class ProductsController : ControllerBase
 
             product.Name = dto.Name;
             product.Stock = dto.Stock;
+            product.MinStock = dto.MinStock;
             await _context.SaveChangesAsync();
 
             return NoContent();

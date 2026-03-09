@@ -20,6 +20,9 @@ public class Product
     
     [Column("Stock")]
     public int Stock { get; set; }
+
+    [Column("Min_Stock")]
+    public int MinStock { get; set; } = 0;
     
     // Navigation property
     [ForeignKey("BranchId")]

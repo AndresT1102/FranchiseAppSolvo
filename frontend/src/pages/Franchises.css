@@ -422,3 +422,113 @@
     font-size: 0.8125rem;
   }
 }
+
+/* Low Stock Alerts */
+.low-stock-alert {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+  padding: 0.25rem 0.75rem;
+  background-color: #fef3c7;
+  color: #92400e;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.low-stock-alert svg {
+  flex-shrink: 0;
+}
+
+.low-stock-row {
+  background-color: #fffbeb !important;
+}
+
+.low-stock-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.5rem;
+  color: #f59e0b;
+}
+
+.stock-badge-low {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  border: 1px solid #fbbf24;
+}
+
+.min-stock-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  background-color: #f3f4f6;
+  color: #6b7280;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.status-warning {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.status-ok {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.field-hint {
+  font-size: 0.875rem;
+  color: #6b7280;
+  font-weight: 400;
+}
+
+.form-help-text {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.stock-info {
+  margin-bottom: 1rem;
+  padding: 0.75rem;
+  background-color: #f3f4f6;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+}
+
+.stock-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background-color: #fef3c7;
+  color: #92400e;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.stock-warning svg {
+  flex-shrink: 0;
+}
+
+@media (max-width: 768px) {
+  .low-stock-alert {
+    display: flex;
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+}

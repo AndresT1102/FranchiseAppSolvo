@@ -151,7 +151,6 @@ const Branches = () => {
             <thead>
               <tr>
                 <th>Branch Name</th>
-                <th>Created Date</th>
                 <th>Products</th>
                 <th>Actions</th>
               </tr>
@@ -161,7 +160,6 @@ const Branches = () => {
                 filteredBranches.map((branch) => (
                   <tr key={branch.id}>
                     <td className="font-semibold">{branch.name}</td>
-                    <td className="text-gray">-</td>
                     <td>{productCounts[branch.id] || 0}</td>
                     <td>
                       <div className="action-buttons">
