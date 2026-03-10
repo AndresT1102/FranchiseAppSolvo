@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { branchApi, franchiseApi, productApi } from '../services/api';
 import Modal from '../components/common/Modal';
 import SearchBar from '../components/common/SearchBar';
-import Button from '../components/common/button';
-import { showSuccess, showError, showWarning, showConfirm } from '../utils/sweetAlert';
+import Button from '../components/common/Button';
+import { showSuccess, showWarning, showConfirm } from '../utils/sweetAlert';
+import { handleApiError } from '../utils/errorHandler';
 import './Franchises.css';
 
 const Branches = () => {
@@ -19,11 +20,7 @@ const Branches = () => {
   const [editingBranch, setEditingBranch] = useState(null);
   const [formData, setFormData] = useState({ name: '', franchiseId: '' });
 
-  useEffect(() => {
-    loadData();
-  }, [franchiseId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -47,12 +44,15 @@ const Branches = () => {
       );
       setProductCounts(counts);
     } catch (error) {
-      console.error('Error loading branches:', error);
-      showError('Error loading branches. Please try again.');
+      handleApiError(error, 'Error loading branches. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [franchiseId]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleCreate = () => {
     setEditingBranch(null);
@@ -78,8 +78,7 @@ const Branches = () => {
         await loadData();
         showSuccess('Branch deleted successfully!');
       } catch (error) {
-        console.error('Error deleting branch:', error);
-        showError('Error deleting branch. It may have associated products.');
+        handleApiError(error, 'Error deleting branch. It may have associated products.');
       }
     }
   };
@@ -105,8 +104,7 @@ const Branches = () => {
       setFormData({ name: '', franchiseId: '' });
       await loadData();
     } catch (error) {
-      console.error('Error saving branch:', error);
-      showError('Error saving branch. Please try again.');
+      handleApiError(error, 'Error saving branch. Please try again.');
     }
   };
 

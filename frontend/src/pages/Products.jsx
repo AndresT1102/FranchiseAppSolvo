@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { productApi, branchApi, franchiseApi } from '../services/api';
 import Modal from '../components/common/Modal';
 import SearchBar from '../components/common/SearchBar';
-import Button from '../components/common/button';
-import { showSuccess, showError, showWarning, showConfirm } from '../utils/sweetAlert';
+import Button from '../components/common/Button';
+import { showSuccess, showWarning, showConfirm } from '../utils/sweetAlert';
+import { handleApiError } from '../utils/errorHandler';
 import './Franchises.css';
 
 const Products = () => {
@@ -21,11 +22,7 @@ const Products = () => {
   const [formData, setFormData] = useState({ name: '', stock: 0, minStock: 0, branchId: '' });
   const [stockValue, setStockValue] = useState(0);
 
-  useEffect(() => {
-    loadData();
-  }, [branchId]);
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -39,12 +36,15 @@ const Products = () => {
       const productsResponse = await productApi.getAll(branchId);
       setProducts(productsResponse.data);
     } catch (error) {
-      console.error('Error loading products:', error);
-      showError('Error loading products. Please try again.');
+      handleApiError(error, 'Error loading products. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [branchId]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const handleCreate = () => {
     setEditingProduct(null);
@@ -81,8 +81,7 @@ const Products = () => {
         await loadData();
         showSuccess('Product deleted successfully!');
       } catch (error) {
-        console.error('Error deleting product:', error);
-        showError('Error deleting product. Please try again.');
+        handleApiError(error, 'Error deleting product. Please try again.');
       }
     }
   };
@@ -126,8 +125,7 @@ const Products = () => {
       setFormData({ name: '', stock: 0, minStock: 0, branchId: '' });
       await loadData();
     } catch (error) {
-      console.error('Error saving product:', error);
-      showError('Error saving product. Please try again.');
+      handleApiError(error, 'Error saving product. Please try again.');
     }
   };
 
@@ -153,8 +151,7 @@ const Products = () => {
       setUpdatingStock(null);
       await loadData();
     } catch (error) {
-      console.error('Error updating stock:', error);
-      showError('Error updating stock. Please try again.');
+      handleApiError(error, 'Error updating stock. Please try again.');
     }
   };
 

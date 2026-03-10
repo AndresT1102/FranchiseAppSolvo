@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import StatsCard from '../components/stats/StatsCard';
-import { statsApi, franchiseApi } from '../services/api';
+import { statsApi } from '../services/api';
+import { handleApiError } from '../utils/errorHandler';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -21,10 +22,10 @@ const Dashboard = () => {
   const loadDashboardData = async () => {
     try {
       setLoading(true);
-      const data = await statsApi.getDashboard();
-      setStats(data);
+      const response = await statsApi.getDashboard();
+      setStats(response.data);
     } catch (error) {
-      console.error('Error loading dashboard:', error);
+      handleApiError(error, 'Error loading dashboard. Please try again.');
     } finally {
       setLoading(false);
     }

@@ -25,7 +25,9 @@ public class BranchesController : ControllerBase
     {
         try
         {
-            var query = _context.Branches.AsQueryable();
+            var query = _context.Branches
+                .AsNoTracking() 
+                .AsQueryable();
 
             if (franchiseId.HasValue)
             {
@@ -57,6 +59,7 @@ public class BranchesController : ControllerBase
         try
         {
             var branch = await _context.Branches
+                .AsNoTracking() 
                 .Where(b => b.Id == id)
                 .Select(b => new BranchDto
                 {
@@ -91,10 +94,23 @@ public class BranchesController : ControllerBase
                 return BadRequest("Branch name is required");
             }
 
-            var franchiseExists = await _context.Franchises.AnyAsync(f => f.Id == dto.FranchiseId);
+            var franchiseExists = await _context.Franchises
+                .AsNoTracking()
+                .AnyAsync(f => f.Id == dto.FranchiseId);
+            
             if (!franchiseExists)
             {
                 return BadRequest($"Franchise with ID {dto.FranchiseId} does not exist");
+            }
+
+            var duplicateExists = await _context.Branches
+                .AsNoTracking()
+                .AnyAsync(b => b.FranchiseId == dto.FranchiseId && 
+                              EF.Functions.Like(b.Name, dto.Name));
+
+            if (duplicateExists)
+            {
+                return Conflict($"A branch with the name '{dto.Name}' already exists in this franchise");
             }
 
             var branch = new Branch
@@ -137,6 +153,17 @@ public class BranchesController : ControllerBase
             if (branch == null)
             {
                 return NotFound($"Branch with ID {id} not found");
+            }
+
+            var duplicateExists = await _context.Branches
+                .AsNoTracking()
+                .AnyAsync(b => b.Id != id && 
+                              b.FranchiseId == branch.FranchiseId && 
+                              EF.Functions.Like(b.Name, dto.Name));
+
+            if (duplicateExists)
+            {
+                return Conflict($"A branch with the name '{dto.Name}' already exists in this franchise");
             }
 
             branch.Name = dto.Name;

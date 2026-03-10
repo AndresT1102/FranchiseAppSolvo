@@ -26,6 +26,7 @@ public class FranchisesController : ControllerBase
         try
         {
             var franchises = await _context.Franchises
+                .AsNoTracking() 
                 .Select(f => new FranchiseDto
                 {
                     Id = f.Id,
@@ -49,6 +50,7 @@ public class FranchisesController : ControllerBase
         try
         {
             var franchise = await _context.Franchises
+                .AsNoTracking()
                 .Where(f => f.Id == id)
                 .Select(f => new FranchiseDto
                 {
@@ -80,6 +82,15 @@ public class FranchisesController : ControllerBase
             if (string.IsNullOrWhiteSpace(dto.Name))
             {
                 return BadRequest("Franchise name is required");
+            }
+
+            var duplicateExists = await _context.Franchises
+                .AsNoTracking()
+                .AnyAsync(f => EF.Functions.Like(f.Name, dto.Name));
+
+            if (duplicateExists)
+            {
+                return Conflict($"A franchise with the name '{dto.Name}' already exists");
             }
 
             var franchise = new Franchise
@@ -120,6 +131,15 @@ public class FranchisesController : ControllerBase
             if (franchise == null)
             {
                 return NotFound($"Franchise with ID {id} not found");
+            }
+
+            var duplicateExists = await _context.Franchises
+                .AsNoTracking()
+                .AnyAsync(f => f.Id != id && EF.Functions.Like(f.Name, dto.Name));
+
+            if (duplicateExists)
+            {
+                return Conflict($"A franchise with the name '{dto.Name}' already exists");
             }
 
             franchise.Name = dto.Name;

@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { franchiseApi, branchApi } from '../services/api';
 import Modal from '../components/common/Modal';
 import SearchBar from '../components/common/SearchBar';
-import Button from '../components/common/button';
-import { showSuccess, showError, showConfirm, showWarning } from '../utils/sweetAlert';
+import Button from '../components/common/Button';
+import { showSuccess, showConfirm, showWarning } from '../utils/sweetAlert';
+import { handleApiError } from '../utils/errorHandler';
 import './Franchises.css';
 
 const Franchises = () => {
@@ -17,11 +18,7 @@ const Franchises = () => {
   const [editingFranchise, setEditingFranchise] = useState(null);
   const [formData, setFormData] = useState({ name: '' });
 
-  useEffect(() => {
-    loadFranchises();
-  }, []);
-
-  const loadFranchises = async () => {
+  const loadFranchises = useCallback(async () => {
     try {
       setLoading(true);
       const response = await franchiseApi.getAll();
@@ -41,12 +38,15 @@ const Franchises = () => {
       );
       setBranchCounts(counts);
     } catch (error) {
-      console.error('Error loading franchises:', error);
-      showError('Error loading franchises. Please try again.');
+      handleApiError(error, 'Failed to load franchises');
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadFranchises();
+  }, [loadFranchises]);
 
   const handleCreate = () => {
     setEditingFranchise(null);
@@ -72,8 +72,7 @@ const Franchises = () => {
         await loadFranchises();
         showSuccess('Franchise deleted successfully!');
       } catch (error) {
-        console.error('Error deleting franchise:', error);
-        showError('Error deleting franchise. It may have associated branches.');
+        handleApiError(error, 'Failed to delete franchise.');
       }
     }
   };
@@ -99,8 +98,7 @@ const Franchises = () => {
       setFormData({ name: '' });
       await loadFranchises();
     } catch (error) {
-      console.error('Error saving franchise:', error);
-      showError('Error saving franchise. Please try again.');
+      handleApiError(error, 'Failed to save franchise.');
     }
   };
 

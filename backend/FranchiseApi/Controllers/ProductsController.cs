@@ -25,7 +25,9 @@ public class ProductsController : ControllerBase
     {
         try
         {
-            var query = _context.Products.AsQueryable();
+            var query = _context.Products
+                .AsNoTracking() 
+                .AsQueryable();
 
             if (branchId.HasValue)
             {
@@ -39,7 +41,7 @@ public class ProductsController : ControllerBase
                     BranchId = p.BranchId,
                     Name = p.Name,
                     Stock = p.Stock,
-                    MinStock = p.MinStock  // ⬅️ AGREGADO
+                    MinStock = p.MinStock
                 })
                 .ToListAsync();
 
@@ -59,6 +61,7 @@ public class ProductsController : ControllerBase
         try
         {
             var product = await _context.Products
+                .AsNoTracking() 
                 .Where(p => p.Id == id)
                 .Select(p => new ProductDto
                 {
@@ -66,7 +69,7 @@ public class ProductsController : ControllerBase
                     BranchId = p.BranchId,
                     Name = p.Name,
                     Stock = p.Stock,
-                    MinStock = p.MinStock  // ⬅️ AGREGADO
+                    MinStock = p.MinStock
                 })
                 .FirstOrDefaultAsync();
 
@@ -105,10 +108,23 @@ public class ProductsController : ControllerBase
                 return BadRequest("Minimum stock cannot be negative");
             }
 
-            var branchExists = await _context.Branches.AnyAsync(b => b.Id == dto.BranchId);
+            var branchExists = await _context.Branches
+                .AsNoTracking()
+                .AnyAsync(b => b.Id == dto.BranchId);
+            
             if (!branchExists)
             {
                 return BadRequest($"Branch with ID {dto.BranchId} does not exist");
+            }
+
+            var duplicateExists = await _context.Products
+                .AsNoTracking()
+                .AnyAsync(p => p.BranchId == dto.BranchId && 
+                              EF.Functions.Like(p.Name, dto.Name));
+
+            if (duplicateExists)
+            {
+                return Conflict($"A product with the name '{dto.Name}' already exists in this branch");
             }
 
             var product = new Product
@@ -165,6 +181,17 @@ public class ProductsController : ControllerBase
             if (product == null)
             {
                 return NotFound($"Product with ID {id} not found");
+            }
+
+            var duplicateExists = await _context.Products
+                .AsNoTracking()
+                .AnyAsync(p => p.Id != id && 
+                              p.BranchId == product.BranchId && 
+                              EF.Functions.Like(p.Name, dto.Name));
+
+            if (duplicateExists)
+            {
+                return Conflict($"A product with the name '{dto.Name}' already exists in this branch");
             }
 
             product.Name = dto.Name;
