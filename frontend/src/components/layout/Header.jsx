@@ -1,6 +1,6 @@
 import './Header.css';
 
-const Header = ({ title, subtitle, onMenuClick }) => {
+const Header = ({ subtitle, onMenuClick }) => {
   return (
     <header className="header">
       <div className="header-content">

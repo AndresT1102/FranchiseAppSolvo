@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Base URL del backend
-const API_BASE_URL = 'http://localhost:5264/api';
+// Base URL of the backend from environment variable
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5264/api';
 
 // Configurar axios
 const api = axios.create({
@@ -10,6 +10,22 @@ const api = axios.create({
     'Content-Type': 'application/json'
   }
 });
+
+// Logging interceptor under development
+if (import.meta.env.DEV) {
+  api.interceptors.request.use(request => {
+    console.log('Starting Request', request);
+    return request;
+  });
+
+  api.interceptors.response.use(
+    response => response,
+    error => {
+      console.error('Response Error:', error.response?.data || error.message);
+      return Promise.reject(error);
+    }
+  );
+}
 
 // ============ FRANCHISES ============
 export const franchiseApi = {
