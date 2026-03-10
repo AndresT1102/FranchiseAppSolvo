@@ -7,6 +7,7 @@ const Button = ({
   size = 'md',
   type = 'button',
   disabled = false,
+  loading = false,
   icon,
   className = ''
 }) => {
@@ -15,10 +16,19 @@ const Button = ({
       type={type}
       className={`btn btn-${variant} btn-${size} ${className}`}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || loading}
     >
-      {icon && <span className="btn-icon">{icon}</span>}
-      {children}
+      {loading ? (
+        <>
+          <span className="btn-spinner"></span>
+          {children}
+        </>
+      ) : (
+        <>
+          {icon && <span className="btn-icon">{icon}</span>}
+          {children}
+        </>
+      )}
     </button>
   );
 };

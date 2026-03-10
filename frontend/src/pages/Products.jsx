@@ -6,6 +6,7 @@ import SearchBar from '../components/common/SearchBar';
 import Button from '../components/common/Button';
 import { showSuccess, showWarning, showConfirm } from '../utils/sweetAlert';
 import { handleApiError } from '../utils/errorHandler';
+import Pagination from '../components/common/Pagination';
 import './Franchises.css';
 
 const Products = () => {
@@ -21,6 +22,11 @@ const Products = () => {
   const [updatingStock, setUpdatingStock] = useState(null);
   const [formData, setFormData] = useState({ name: '', stock: 0, minStock: 0, branchId: '' });
   const [stockValue, setStockValue] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
+  const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState(null);
+  const [updatingStockId, setUpdatingStockId] = useState(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -76,12 +82,15 @@ const Products = () => {
     );
 
     if (result.isConfirmed) {
+      setDeletingId(id);
       try {
         await productApi.delete(id);
         await loadData();
         showSuccess('Product deleted successfully!');
       } catch (error) {
-        handleApiError(error, 'Error deleting product. Please try again.');
+        handleApiError(error, 'Failed to delete product');
+      } finally {
+        setDeletingId(null);
       }
     }
   };
@@ -126,6 +135,8 @@ const Products = () => {
       await loadData();
     } catch (error) {
       handleApiError(error, 'Error saving product. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -136,7 +147,7 @@ const Products = () => {
       showWarning('Stock cannot be negative');
       return;
     }
-
+    setUpdatingStockId(updatingStock.id);
     try {
       await productApi.updateStock(updatingStock.id, parseInt(stockValue));
       
@@ -152,6 +163,8 @@ const Products = () => {
       await loadData();
     } catch (error) {
       handleApiError(error, 'Error updating stock. Please try again.');
+    } finally {
+      setUpdatingStockId(null);
     }
   };
 
@@ -160,6 +173,20 @@ const Products = () => {
   );
 
   const lowStockCount = products.filter(p => p.stock <= p.minStock && p.minStock > 0).length;
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstItem, indexOfLastItem);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   if (loading) {
     return <div className="loading">Loading products...</div>;
@@ -217,8 +244,8 @@ const Products = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredProducts.length > 0 ? (
-                filteredProducts.map((product) => {
+              {currentProducts.length > 0 ? (
+                currentProducts.map((product) => {
                   const isLowStock = product.stock <= product.minStock && product.minStock > 0;
                   return (
                     <tr key={product.id} className={isLowStock ? 'low-stock-row' : ''}>
@@ -260,6 +287,7 @@ const Products = () => {
                           <button
                             className="action-btn action-btn-stock"
                             onClick={() => handleUpdateStock(product)}
+                            disabled={deletingId === product.id || updatingStockId === product.id}
                             title="Update Stock"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -279,6 +307,7 @@ const Products = () => {
                           <button
                             className="action-btn action-btn-delete"
                             onClick={() => handleDelete(product.id)}
+                            disabled={deletingId === product.id}
                             title="Delete"
                           >
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -300,6 +329,13 @@ const Products = () => {
               )}
             </tbody>
           </table>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+            totalItems={filteredProducts.length}
+            itemsPerPage={itemsPerPage}
+          />
         </div>
       </div>
 
@@ -313,7 +349,7 @@ const Products = () => {
             <Button variant="secondary" onClick={() => setShowModal(false)}>
               Cancel
             </Button>
-            <Button variant="primary" type="submit" onClick={handleSubmit}>
+            <Button variant="primary" type="submit" onClick={handleSubmit} loading={submitting}>
               {editingProduct ? 'Update' : 'Create'}
             </Button>
           </>
