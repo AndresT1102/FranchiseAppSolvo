@@ -7,7 +7,7 @@ import Button from '../components/common/Button';
 import { showSuccess, showConfirm, showWarning } from '../utils/sweetAlert';
 import { handleApiError } from '../utils/errorHandler';
 import Pagination from '../components/common/Pagination';
-import './Franchises.css';
+import './Pages.css';
 
 const Franchises = () => {
   const navigate = useNavigate();

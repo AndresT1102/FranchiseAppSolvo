@@ -7,7 +7,7 @@ import Button from '../components/common/Button';
 import { showSuccess, showWarning, showConfirm } from '../utils/sweetAlert';
 import { handleApiError } from '../utils/errorHandler';
 import Pagination from '../components/common/Pagination';
-import './Franchises.css';
+import './Pages.css';
 
 const Products = () => {
   const { branchId } = useParams();

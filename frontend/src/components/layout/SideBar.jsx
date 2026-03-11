@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom';
-import './Sidebar.css';
+import './SideBar.css';
 
 const Sidebar = ({ isOpen, onClose }) => {
   const menuItems = [
